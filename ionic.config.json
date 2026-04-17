@@ -1,0 +1,7 @@
+{
+  "name": "kasir-kelontong",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
