@@ -3,7 +3,9 @@ import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
-import { cart, cube, chevronForward, create, trash, closeCircle, receipt, informationCircleOutline } from 'ionicons/icons';
+import { cart, cube, chevronForward, create, trash, closeCircle, receipt, informationCircleOutline, trashOutline, downloadOutline } from 'ionicons/icons';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-tab1',
@@ -14,19 +16,10 @@ import { cart, cube, chevronForward, create, trash, closeCircle, receipt, inform
 })
 export class Tab1Page {
   statusHalaman: string = 'depan';
+  baruNama: string = ''; baruStok: number = 0;
+  baruPcs: number = 0; baruPack: number = 0; baruHdus: number = 0;
+  baruH14: number = 0; baruH12: number = 0; baruH1k: number = 0;
 
-  // Variabel Form
-  baruNama: string = '';
-  baruStok: number = 0;
-  baruPcs: number = 0;
-  baruPack: number = 0;
-  baruH14: number = 0;
-  baruH12: number = 0;
-  baruH1k: number = 0;
-  baruHrcg: number = 0;
-  baruHdus: number = 0;
-
-  // Data
   daftarBarang: any[] = [];
   barangFilter: any[] = [];
   keranjang: any[] = [];
@@ -34,48 +27,44 @@ export class Tab1Page {
   kataKunci: string = '';
   sedangEdit: boolean = false;
   indexEdit: number = -1;
-
-  // Fitur Struk & Riwayat
   transaksiTerakhir: any = null;
   riwayatPenjualan: any[] = [];
 
-  constructor(
-    private alertController: AlertController,
-    private toastController: ToastController
-  ) {
-    addIcons({ cart, cube, chevronForward, create, trash, closeCircle, receipt, informationCircleOutline });
-    
-    // Data Contoh
-    this.daftarBarang = [
-      { nama: 'Sabun Lifeboy', stok: 10, pcs: 3500, pack: 0, h14: 0, h12: 0, h1k: 0, hrcg: 18000, hdus: 0 },
-      { nama: 'Beras Ramos', stok: 50, pcs: 0, pack: 0, h14: 4000, h12: 7500, h1k: 14000, hrcg: 0, hdus: 0 }
-    ];
-    this.barangFilter = [...this.daftarBarang];
+  constructor(private alertController: AlertController, private toastController: ToastController) {
+    addIcons({ cart, cube, chevronForward, create, trash, closeCircle, receipt, informationCircleOutline, trashOutline, downloadOutline });
+    this.muatData();
+  }
+
+  muatData() {
+    const dataTersimpan = localStorage.getItem('DATA_PRODUK');
+    const riwayatTersimpan = localStorage.getItem('RIWAYAT_PENJUALAN');
+    if (dataTersimpan) this.daftarBarang = JSON.parse(dataTersimpan);
+    if (riwayatTersimpan) this.riwayatPenjualan = JSON.parse(riwayatTersimpan);
+    this.filterBarang();
+  }
+
+  simpanKeStorage() {
+    localStorage.setItem('DATA_PRODUK', JSON.stringify(this.daftarBarang));
+    localStorage.setItem('RIWAYAT_PENJUALAN', JSON.stringify(this.riwayatPenjualan));
   }
 
   setHalaman(nama: string) {
     this.statusHalaman = nama;
     if (nama === 'kasir') this.filterBarang();
-    this.resetForm();
+    if (nama !== 'tambah') this.resetForm();
   }
 
   async simpanBaru() {
-    if (!this.baruNama) {
-      this.presentToast('Nama produk tidak boleh kosong!');
-      return;
-    }
+    if (!this.baruNama) { this.presentToast('Nama produk kosong!'); return; }
     const data = {
-      nama: this.baruNama, stok: this.baruStok, pcs: this.baruPcs,
-      pack: this.baruPack, h14: this.baruH14, h12: this.baruH12,
-      h1k: this.baruH1k, hrcg: this.baruHrcg, hdus: this.baruHdus
+      nama: this.baruNama, stok: this.baruStok, 
+      pcs: this.baruPcs, pack: this.baruPack, hdus: this.baruHdus,
+      h14: this.baruH14, h12: this.baruH12, h1k: this.baruH1k
     };
-    if (this.sedangEdit) {
-      this.daftarBarang[this.indexEdit] = data;
-      this.presentToast('Data berhasil diperbarui!');
-    } else {
-      this.daftarBarang.push(data);
-      this.presentToast('Produk baru ditambahkan!');
-    }
+    if (this.sedangEdit) { this.daftarBarang[this.indexEdit] = data; } 
+    else { this.daftarBarang.push(data); }
+    this.simpanKeStorage();
+    this.presentToast('Tersimpan!');
     this.resetForm();
     this.filterBarang();
   }
@@ -83,37 +72,23 @@ export class Tab1Page {
   editBarang(barang: any) {
     this.sedangEdit = true;
     this.indexEdit = this.daftarBarang.indexOf(barang);
-    this.baruNama = barang.nama;
-    this.baruStok = barang.stok;
-    this.baruPcs = barang.pcs || 0;
-    this.baruPack = barang.pack || 0;
-    this.baruH14 = barang.h14 || 0;
-    this.baruH12 = barang.h12 || 0;
-    this.baruH1k = barang.h1k || 0;
-    this.baruHrcg = barang.hrcg || 0;
-    this.baruHdus = barang.hdus || 0;
-    window.scrollTo(0,0);
+    this.baruNama = barang.nama; this.baruStok = barang.stok;
+    this.baruPcs = barang.pcs; this.baruPack = barang.pack; this.baruHdus = barang.hdus;
+    this.baruH14 = barang.h14; this.baruH12 = barang.h12; this.baruH1k = barang.h1k;
   }
 
-  async hapusBarang(index: number) {
+  async hapusBarang(barang: any) {
     const alert = await this.alertController.create({
       header: 'Hapus Produk?',
-      buttons: [
-        { text: 'Batal', role: 'cancel' },
-        { text: 'Hapus', handler: () => {
-          this.daftarBarang.splice(index, 1);
+      message: `Yakin ingin menghapus ${barang.nama}?`,
+      buttons: [{ text: 'Batal' }, { text: 'Hapus', handler: () => {
+          const idx = this.daftarBarang.indexOf(barang);
+          this.daftarBarang.splice(idx, 1);
+          this.simpanKeStorage();
           this.filterBarang();
-        }}
-      ]
+      } }]
     });
     await alert.present();
-  }
-
-  resetForm() {
-    this.baruNama = ''; this.baruStok = 0; 
-    this.baruPcs = 0; this.baruPack = 0; this.baruH14 = 0; this.baruH12 = 0;
-    this.baruH1k = 0; this.baruHrcg = 0; this.baruHdus = 0;
-    this.sedangEdit = false; this.indexEdit = -1;
   }
 
   filterBarang() {
@@ -121,46 +96,74 @@ export class Tab1Page {
       this.daftarBarang.filter(b => b.nama.toLowerCase().includes(this.kataKunci.toLowerCase()));
   }
 
-  tambahKeKeranjang(barang: any, hargaSatuan: number, satuan: string) {
+  tambahKeKeranjang(barang: any, harga: number, satuan: string) {
+    if (barang.stok <= 0) { this.presentToast('Stok Habis!'); return; }
     const itemAda = this.keranjang.find(i => i.namaBarang === barang.nama && i.satuan === satuan);
-    if (itemAda) {
-      itemAda.jumlah += 1;
-      itemAda.harga += hargaSatuan;
-    } else {
-      this.keranjang.push({ namaBarang: barang.nama, harga: hargaSatuan, satuan: satuan, jumlah: 1 });
-    }
-    this.totalBelanja += hargaSatuan;
+    if (itemAda) { itemAda.jumlah += 1; itemAda.totalItem = itemAda.jumlah * harga; } 
+    else { this.keranjang.push({ namaBarang: barang.nama, hargaSatuan: harga, totalItem: harga, satuan: satuan, jumlah: 1 }); }
+    this.hitungTotal();
   }
 
-  hapusDariKeranjang(index: number, item: any) {
-    this.totalBelanja -= item.harga;
-    this.keranjang.splice(index, 1);
+  hapusDariKeranjang(idx: number) {
+    this.keranjang.splice(idx, 1);
+    this.hitungTotal();
+  }
+
+  hitungTotal() {
+    this.totalBelanja = this.keranjang.reduce((acc, item) => acc + item.totalItem, 0);
   }
 
   async prosesPembayaran() {
-    const dataStruk = {
-      items: [...this.keranjang],
-      total: this.totalBelanja,
-      waktu: new Date().toLocaleString('id-ID')
-    };
-
+    if (this.keranjang.length === 0) return;
+    this.keranjang.forEach(item => {
+      const b = this.daftarBarang.find(x => x.nama === item.namaBarang);
+      if (b) b.stok = Math.max(0, b.stok - item.jumlah);
+    });
+    const dataStruk = { items: [...this.keranjang], total: this.totalBelanja, waktu: new Date().toLocaleString('id-ID') };
     this.riwayatPenjualan.unshift(dataStruk);
     this.transaksiTerakhir = dataStruk;
-
-    const alert = await this.alertController.create({
-      header: 'Sukses',
-      message: 'Transaksi Berhasil!',
-      buttons: ['OK']
-    });
-    await alert.present();
-    
-    this.keranjang = [];
-    this.totalBelanja = 0;
+    this.simpanKeStorage();
+    this.keranjang = []; this.totalBelanja = 0;
     this.statusHalaman = 'struk'; 
   }
 
-  async presentToast(msg: string) {
-    const toast = await this.toastController.create({ message: msg, duration: 2000, color: 'dark' });
-    await toast.present();
+  lihatDetail(transaksi: any) {
+    this.transaksiTerakhir = transaksi;
+    this.statusHalaman = 'struk';
+  }
+
+  async hapusRiwayat(index: number, event: any) {
+    event.stopPropagation();
+    const alert = await this.alertController.create({
+      header: 'Hapus Riwayat?',
+      message: 'Hapus transaksi ini dari riwayat?',
+      buttons: [{ text: 'Batal' }, { text: 'Hapus', handler: () => {
+          this.riwayatPenjualan.splice(index, 1);
+          this.simpanKeStorage();
+      } }]
+    });
+    await alert.present();
+  }
+
+  async cetakPDF() {
+    const elemen = document.getElementById('struk-area');
+    if (!elemen) return;
+    const canvas = await html2canvas(elemen);
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm',);
+    pdf.addImage(imgData, 'PNG', 0, 0, 80, 0);
+    pdf.save(`Struk_${this.transaksiTerakhir.waktu}.pdf`);
+  }
+
+  resetForm() {
+    this.baruNama = ''; this.baruStok = 0; 
+    this.baruPcs = 0; this.baruPack = 0; this.baruHdus = 0;
+    this.baruH14 = 0; this.baruH12 = 0; this.baruH1k = 0;
+    this.sedangEdit = false;
+  }
+
+  async presentToast(m: string) {
+    const t = await this.toastController.create({ message: m, duration: 2000 });
+    await t.present();
   }
 }
