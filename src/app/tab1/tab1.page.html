@@ -58,11 +58,17 @@
             <td><strong>{{ b.nama }}</strong></td>
             <td><ion-badge color="success">{{ b.stok }}</ion-badge></td>
             <td>
-              <span class="harga-tag" *ngIf="b.pcs">Pcs: {{b.pcs | number}}</span>
-              <span class="harga-tag" *ngIf="b.pack">Pk: {{b.pack | number}}</span>
-              <span class="harga-tag" *ngIf="b.hdus">Ds: {{b.hdus | number}}</span>
-              <span class="harga-tag" *ngIf="b.h1k">1kg: {{b.h1k | number}}</span>
-            </td>
+                <span class="harga-tag" *ngIf="b.pcs">Pcs: {{b.pcs | number}}</span>
+                <span class="harga-tag" *ngIf="b.pack">Pk: {{b.pack | number}}</span>
+                <span class="harga-tag" *ngIf="b.hdus">Ds: {{b.hdus | number}}</span>
+  
+              <!-- TAMBAHKAN DUA BARIS DI BAWAH INI -->
+                <span class="harga-tag" *ngIf="b.h14">1/4kg: {{b.h14 | number}}</span>
+                <span class="harga-tag" *ngIf="b.h12">1/2kg: {{b.h12 | number}}</span>
+  
+                <span class="harga-tag" *ngIf="b.h1k">1kg: {{b.h1k | number}}</span>
+              </td>
+
             <td>
               <ion-button fill="clear" size="small" (click)="editBarang(b)"><ion-icon name="create"></ion-icon></ion-button>
               <ion-button fill="clear" size="small" color="danger" (click)="hapusBarang(b)"><ion-icon name="trash"></ion-icon></ion-button>
