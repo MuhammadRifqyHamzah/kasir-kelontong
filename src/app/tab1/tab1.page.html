@@ -1,41 +1,66 @@
 <ion-header class="ion-no-border">
   <ion-toolbar style="--background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%); --color: white;">
-    <ion-title style="font-weight: 800;">KASIR KELONTONG</ion-title>
+    <ion-title style="font-weight: 800;">SobatGrocery</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
   <style>
-    .struk-box { background: white; border: 1px dashed #333; padding: 20px; font-family: monospace; color: #000; width: 260px; margin: auto; }
-    .price-tile { background: #f4f7f9; border: 1px solid #ddd; border-radius: 8px; padding: 5px; margin-bottom: 5px; }
-    .btn-harga { --padding-start: 8px; --padding-end: 8px; font-size: 11px; margin: 2px; }
-    .card-menu { --border-radius: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
-    .table-container { margin-top: 20px; overflow-x: auto; background: white; border-radius: 8px; border: 1px solid #eee; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    th { background: #f8f9fa; padding: 10px; border-bottom: 2px solid #eee; text-align: left; }
-    td { padding: 10px; border-bottom: 1px solid #eee; }
-    .harga-tag { display: block; font-size: 10px; color: #666; line-height: 1.2; }
-    .barang-item { border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 12px; border-radius: 12px; background: white; }
+    ion-tab-bar { display: none !important; height: 0 !important; }
+    ion-content { --background: #f4f7f9; }
+
+    /* Dashboard */
+    .card-menu { margin: 15px 5px; border-radius: 12px; height: 150px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; border: none; box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+    .card-menu-content { pointer-events: none; text-align: center; }
+    .card-menu ion-icon { font-size: 55px; color: white !important; margin-bottom: 12px; }
+    .card-menu h2 { color: white !important; font-weight: 800 !important; font-size: 18px; text-transform: uppercase; }
+
+    /* Kasir Header */
+    .kasir-total-card { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 15px; padding: 20px; margin-bottom: 20px; color: white; box-shadow: 0 8px 20px rgba(79, 172, 254, 0.3); }
+    
+    /* Perbaikan Jarak Barang agar tidak mepet */
+    .barang-item { border: 1px solid #f0f0f0; padding: 18px; margin-bottom: 12px; border-radius: 15px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+    .barang-header { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 10px; }
+    .barang-nama { font-size: 16px; font-weight: bold; color: #333; margin: 0; }
+    .stok-badge { --background: #e3f2fd; color: #1976d2; font-weight: bold; padding: 5px 10px; border-radius: 6px; font-size: 11px; }
+
+    .btn-harga-kasir { --border-radius: 8px; font-weight: bold; margin: 4px; font-size: 12px; }
+    .table-container { margin-top: 20px; overflow-x: auto; background: white; border-radius: 12px; border: 1px solid #eee; }
+    table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    th { background: #f8f9fa; padding: 10px; text-align: left; }
+    td { padding: 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+    .harga-tag { display: block; font-size: 10px; color: #666; margin-bottom: 2px; }
+    .price-tile { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 5px; margin-bottom: 5px; }
+    .struk-box { background: white; padding: 15px; font-family: monospace; color: #000; width: 260px; margin: auto; border: 1px solid #ddd; }
   </style>
 
-  <!-- DEPAN -->
+  <!-- DASHBOARD -->
   <div *ngIf="statusHalaman === 'depan'">
-    <ion-card class="card-menu" (click)="setHalaman('kasir')" style="--background: #4facfe; color: white;">
-      <ion-card-content style="text-align: center;"><ion-icon name="cart" style="font-size: 40px;"></ion-icon><h2 style="font-weight: bold; color: white;">BUKA KASIR</h2></ion-card-content>
-    </ion-card>
-    <ion-card class="card-menu" (click)="setHalaman('tambah')" style="--background: #667eea; color: white;">
-      <ion-card-content style="text-align: center;"><ion-icon name="cube" style="font-size: 40px;"></ion-icon><h2 style="font-weight: bold; color: white;">KELOLA STOK</h2></ion-card-content>
-    </ion-card>
-    <ion-card class="card-menu" (click)="setHalaman('riwayat')" style="--background: #ff9a9e; color: white;">
-      <ion-card-content style="text-align: center;"><ion-icon name="receipt" style="font-size: 40px;"></ion-icon><h2 style="font-weight: bold; color: white;">RIWAYAT PENJUALAN</h2></ion-card-content>
-    </ion-card>
+    <div class="card-menu" (click)="setHalaman('kasir')" style="background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);">
+      <div class="card-menu-content"><ion-icon name="cart"></ion-icon><h2>BUKA KASIR</h2></div>
+    </div>
+    <div class="card-menu" (click)="setHalaman('tambah')" style="background: linear-gradient(to right, #667eea 0%, #764ba2 100%);">
+      <div class="card-menu-content"><ion-icon name="cube"></ion-icon><h2>KELOLA STOK</h2></div>
+    </div>
+    <div class="card-menu" (click)="setHalaman('riwayat')" style="background: linear-gradient(to right, #ff9a9e 0%, #fecfef 100%);">
+      <div class="card-menu-content"><ion-icon name="receipt"></ion-icon><h2>RIWAYAT PENJUALAN</h2></div>
+    </div>
   </div>
 
   <!-- KELOLA STOK -->
   <div *ngIf="statusHalaman === 'tambah'">
-    <h3 style="font-weight: bold;">Kelola Produk</h3>
-    <ion-item><ion-label position="stacked">Nama Produk</ion-label><ion-input [(ngModel)]="baruNama"></ion-input></ion-item>
-    <ion-item><ion-label position="stacked">Stok Gudang</ion-label><ion-input type="number" [(ngModel)]="baruStok"></ion-input></ion-item>
+    <h3 style="font-weight: 800; margin-bottom: 15px;">Kelola Produk</h3>
+    
+    <!-- Bagian Input (PENTING: Pastikan ini ada) -->
+    <ion-item lines="outline" class="ion-margin-bottom">
+      <ion-label position="stacked">Nama Produk</ion-label>
+      <ion-input [(ngModel)]="baruNama" placeholder="Nama barang"></ion-input>
+    </ion-item>
+    <ion-item lines="outline" class="ion-margin-bottom">
+      <ion-label position="stacked">Stok Gudang</ion-label>
+      <ion-input type="number" [(ngModel)]="baruStok"></ion-input>
+    </ion-item>
+    
     <ion-grid>
       <ion-row>
         <ion-col size="4"><div class="price-tile"><small>Pcs</small><ion-input type="number" [(ngModel)]="baruPcs"></ion-input></div></ion-col>
@@ -48,31 +73,41 @@
         <ion-col size="4"><div class="price-tile"><small>1kg</small><ion-input type="number" [(ngModel)]="baruH1k"></ion-input></div></ion-col>
       </ion-row>
     </ion-grid>
-    <ion-button expand="block" (click)="simpanBaru()">{{ sedangEdit ? 'UPDATE' : 'SIMPAN' }}</ion-button>
-    <ion-button expand="block" fill="outline" (click)="setHalaman('depan')">KEMBALI</ion-button>
+
+    <div style="margin-top: 20px;">
+      <!-- Tombol Update + Hapus saat Edit -->
+      <div *ngIf="sedangEdit">
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <ion-button expand="block" shape="round" (click)="simpanBaru()" style="flex: 3;">UPDATE PRODUK</ion-button>
+          <ion-button expand="block" shape="round" color="danger" (click)="hapusBarang(daftarBarang[indexEdit])" style="flex: 1;">
+            <ion-icon name="trash" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+        <ion-button expand="block" fill="clear" color="medium" (click)="batalEdit()">BATAL EDIT</ion-button>
+      </div>
+      <!-- Tombol Simpan Biasa -->
+      <ion-button *ngIf="!sedangEdit" expand="block" shape="round" (click)="simpanBaru()">SIMPAN PRODUK</ion-button>
+      <ion-button expand="block" fill="outline" shape="round" (click)="setHalaman('depan')" style="margin-top: 10px;">KEMBALI KE MENU</ion-button>
+    </div>
+
+    <!-- Tabel Produk -->
     <div class="table-container">
       <table>
         <thead><tr><th>PRODUK</th><th>STOK</th><th>HARGA</th><th>AKSI</th></tr></thead>
         <tbody>
           <tr *ngFor="let b of daftarBarang">
             <td><strong>{{ b.nama }}</strong></td>
-            <td><ion-badge color="success">{{ b.stok }}</ion-badge></td>
+            <td><ion-badge [color]="b.stok < 5 ? 'danger' : 'success'">{{ b.stok }}</ion-badge></td>
             <td>
-                <span class="harga-tag" *ngIf="b.pcs">Pcs: {{b.pcs | number}}</span>
-                <span class="harga-tag" *ngIf="b.pack">Pk: {{b.pack | number}}</span>
-                <span class="harga-tag" *ngIf="b.hdus">Ds: {{b.hdus | number}}</span>
-  
-              <!-- TAMBAHKAN DUA BARIS DI BAWAH INI -->
-                <span class="harga-tag" *ngIf="b.h14">1/4kg: {{b.h14 | number}}</span>
-                <span class="harga-tag" *ngIf="b.h12">1/2kg: {{b.h12 | number}}</span>
-  
-                <span class="harga-tag" *ngIf="b.h1k">1kg: {{b.h1k | number}}</span>
-              </td>
-
-            <td>
-              <ion-button fill="clear" size="small" (click)="editBarang(b)"><ion-icon name="create"></ion-icon></ion-button>
-              <ion-button fill="clear" size="small" color="danger" (click)="hapusBarang(b)"><ion-icon name="trash"></ion-icon></ion-button>
+              <!-- TAMPILKAN SEMUA HARGA -->
+              <span class="harga-tag" *ngIf="b.pcs">Pcs: {{b.pcs | number}}</span>
+              <span class="harga-tag" *ngIf="b.pack">Pk: {{b.pack | number}}</span>
+              <span class="harga-tag" *ngIf="b.hdus">Ds: {{b.hdus | number}}</span>
+              <span class="harga-tag" *ngIf="b.h14">1/4: {{b.h14 | number}}</span>
+              <span class="harga-tag" *ngIf="b.h12">1/2: {{b.h12 | number}}</span>
+              <span class="harga-tag" *ngIf="b.h1k">1kg: {{b.h1k | number}}</span>
             </td>
+            <td><ion-button fill="clear" (click)="editBarang(b)"><ion-icon name="create" color="primary"></ion-icon></ion-button></td>
           </tr>
         </tbody>
       </table>
@@ -81,51 +116,52 @@
 
   <!-- KASIR -->
   <div *ngIf="statusHalaman === 'kasir'">
-    <div style="background: #fff8e1; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 6px solid #ff8f00;">
-      <small>Total Belanja:</small><h2 style="margin: 0; font-weight: 900; color: #ff8f00;">Rp {{ totalBelanja | number }}</h2>
-    </div>
-    <ion-searchbar placeholder="Cari barang..." [(ngModel)]="kataKunci" (ionInput)="filterBarang()"></ion-searchbar>
-    <div *ngIf="keranjang.length > 0" style="background: #e3f2fd; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
-      <div *ngFor="let itm of keranjang; let idx = index" style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-        <small>{{ itm.jumlah }}x {{ itm.namaBarang }} ({{ itm.satuan }})</small>
-        <div style="display: flex; align-items: center;"><small style="margin-right: 10px;">{{ itm.totalItem | number }}</small><ion-icon name="close-circle" color="danger" (click)="hapusDariKeranjang(idx)"></ion-icon></div>
+    <div class="kasir-total-card"><p style="margin:0; opacity:0.9;">Total Belanja</p><h1 style="margin:0; font-weight:900;">Rp {{ totalBelanja | number }}</h1></div>
+    <ion-searchbar mode="ios" placeholder="Cari barang..." [(ngModel)]="kataKunci" (ionInput)="filterBarang()"></ion-searchbar>
+    
+    <div *ngIf="keranjang.length > 0" style="background:#fff9c4; padding:15px; border-radius:15px; margin-bottom:15px; border:1px solid #fbc02d;">
+      <div *ngFor="let itm of keranjang; let idx = index" style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid rgba(0,0,0,0.05); padding-bottom:5px;">
+        <div><span style="font-size:13px; font-weight:bold;">{{ itm.namaBarang }} ({{ itm.satuan }})</span><br><small>{{ itm.jumlah }} x {{ itm.hargaSatuan | number }}</small></div>
+        <div style="display:flex; align-items:center;"><span style="margin-right:10px; font-weight:800;">Rp {{ itm.totalItem | number }}</span><ion-icon name="close-circle" color="danger" (click)="hapusDariKeranjang(idx)"></ion-icon></div>
       </div>
-      <ion-button expand="block" color="success" (click)="prosesPembayaran()">BAYAR SEKARANG</ion-button>
+      <ion-button expand="block" color="success" shape="round" (click)="prosesPembayaran()">BAYAR</ion-button>
     </div>
+
     <div *ngFor="let b of barangFilter" class="barang-item">
-      <div style="display: flex; justify-content: space-between;"><strong>{{ b.nama }}</strong><ion-badge>Stok: {{ b.stok }}</ion-badge></div>
-      <div style="display: flex; flex-wrap: wrap; margin-top: 8px;">
-        <ion-button class="btn-harga" fill="outline" (click)="tambahKeKeranjang(b, b.pcs, 'Pcs')" *ngIf="b.pcs">Pcs: {{b.pcs | number}}</ion-button>
-        <ion-button class="btn-harga" fill="outline" (click)="tambahKeKeranjang(b, b.pack, 'Pack')" *ngIf="b.pack">Pk: {{b.pack | number}}</ion-button>
-        <ion-button class="btn-harga" fill="outline" (click)="tambahKeKeranjang(b, b.hdus, 'Dus')" *ngIf="b.hdus">Ds: {{b.hdus | number}}</ion-button>
-        <ion-button class="btn-harga" fill="outline" color="secondary" (click)="tambahKeKeranjang(b, b.h14, '1/4kg')" *ngIf="b.h14">1/4: {{b.h14 | number}}</ion-button>
-        <ion-button class="btn-harga" fill="outline" color="secondary" (click)="tambahKeKeranjang(b, b.h12, '1/2kg')" *ngIf="b.h12">1/2: {{b.h12 | number}}</ion-button>
-        <ion-button class="btn-harga" fill="outline" color="secondary" (click)="tambahKeKeranjang(b, b.h1k, '1kg')" *ngIf="b.h1k">1kg: {{b.h1k | number}}</ion-button>
+      <div class="barang-header"><p class="barang-nama">{{ b.nama }}</p><ion-badge class="stok-badge">Stok: {{ b.stok }}</ion-badge></div>
+      <div style="display:flex; flex-wrap:wrap;">
+        <ion-button size="small" fill="solid" (click)="tambahKeKeranjang(b, b.pcs, 'Pcs')" *ngIf="b.pcs">Pcs: {{b.pcs | number}}</ion-button>
+        <ion-button size="small" fill="solid" color="secondary" (click)="tambahKeKeranjang(b, b.h14, '1/4kg')" *ngIf="b.h14">1/4: {{b.h14 | number}}</ion-button>
+        <ion-button size="small" fill="solid" color="secondary" (click)="tambahKeKeranjang(b, b.h12, '1/2kg')" *ngIf="b.h12">1/2: {{b.h12 | number}}</ion-button>
+        <ion-button size="small" fill="solid" color="secondary" (click)="tambahKeKeranjang(b, b.h1k, '1kg')" *ngIf="b.h1k">1kg: {{b.h1k | number}}</ion-button>
       </div>
     </div>
-    <ion-button expand="block" fill="outline" (click)="setHalaman('depan')">KEMBALI</ion-button>
+    <ion-button expand="block" fill="outline" shape="round" (click)="setHalaman('depan')" style="margin-top: 15px;">KEMBALI</ion-button>
+  </div>
+
+  <!-- RIWAYAT -->
+  <div *ngIf="statusHalaman === 'riwayat'">
+    <h3 style="font-weight: 800; margin-bottom: 15px;">Riwayat Penjualan</h3>
+    <div *ngFor="let r of riwayatPenjualan; let i = index" class="barang-item" (click)="lihatDetail(r)">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div><h2 style="margin:0; font-weight: bold;">Rp {{ r.total | number }}</h2><p style="margin:0; font-size: 12px; color: #666;">{{ r.waktu }}</p></div>
+        <ion-button fill="clear" color="danger" (click)="hapusRiwayat(i, $event)"><ion-icon name="trash" slot="icon-only"></ion-icon></ion-button>
+      </div>
+    </div>
+    <ion-button expand="block" fill="outline" shape="round" (click)="setHalaman('depan')">KEMBALI</ion-button>
   </div>
 
   <!-- STRUK -->
   <div *ngIf="statusHalaman === 'struk'" style="text-align: center;">
     <div class="struk-box" id="struk-area">
-      <h3 style="margin: 0;">STRUK BELANJA</h3><small>{{ transaksiTerakhir?.waktu }}</small><hr style="border: 0.5px dashed #333;">
-      <div *ngFor="let item of transaksiTerakhir?.items" style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
-        <span>{{ item.jumlah }}x {{ item.namaBarang }}</span><span>{{ item.totalItem | number }}</span>
-      </div><hr style="border: 0.5px dashed #333;">
+      <h3 style="margin: 0; font-weight: bold;">SOBAT GROCERY</h3><small>{{ transaksiTerakhir?.waktu }}</small><hr>
+      <div *ngFor="let item of transaksiTerakhir?.items" style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px;">
+        <span style="text-align: left;">{{ item.jumlah }}x {{ item.namaBarang }}</span><span>{{ item.totalItem | number }}</span>
+      </div><hr>
       <div style="display: flex; justify-content: space-between; font-weight: bold;"><span>TOTAL</span><span>Rp {{ transaksiTerakhir?.total | number }}</span></div>
     </div>
-    <ion-button expand="block" (click)="cetakPDF()" style="margin-top: 20px;"><ion-icon name="download-outline" slot="start"></ion-icon> UNDUH PDF</ion-button>
-    <ion-button expand="block" fill="outline" (click)="setHalaman('riwayat')">KEMBALI KE RIWAYAT</ion-button>
-  </div>
-
-  <!-- RIWAYAT -->
-  <div *ngIf="statusHalaman === 'riwayat'">
-    <h3 style="font-weight: bold;">Riwayat Penjualan</h3>
-    <div *ngFor="let r of riwayatPenjualan; let i = index" (click)="lihatDetail(r)" style="display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 10px; background: white; cursor: pointer;">
-      <div><div style="font-weight: bold;">{{ r.waktu }}</div><small>{{ r.items.length }} Jenis Barang</small></div>
-      <div style="display: flex; align-items: center;"><strong style="margin-right: 15px;">Rp {{ r.total | number }}</strong><ion-button fill="clear" color="danger" (click)="hapusRiwayat(i, $event)"><ion-icon name="trash-outline"></ion-icon></ion-button></div>
-    </div>
-    <ion-button expand="block" fill="outline" (click)="setHalaman('depan')" style="margin-top: 20px;">MENU UTAMA</ion-button>
+    <ion-button expand="block" shape="round" color="primary" (click)="cetakPDF()" style="margin-top: 25px;">SIMPAN PDF</ion-button>
+    <ion-button expand="block" fill="outline" shape="round" (click)="setHalaman('kasir')" style="margin-top: 10px;">TRANSAKSI BARU</ion-button>
+    <ion-button expand="block" fill="clear" color="medium" (click)="setHalaman('depan')">KEMBALI KE MENU</ion-button>
   </div>
 </ion-content>

@@ -35,3 +35,19 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/* PAKSA HILANGKAN LAPISAN PENGHALANG KLIK */
+app-tabs {
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+/* KEMBALIKAN FUNGSI KLIK HANYA UNTUK KONTEN UTAMA */
+ion-router-outlet {
+  pointer-events: auto !important;
+}
+
+/* SEMBUNYIKAN TAB BAR JIKA MASIH ADA */
+ion-tab-bar {
+  display: none !important;
+}
