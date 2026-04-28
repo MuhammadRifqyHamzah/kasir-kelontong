@@ -1,7 +1,6 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-// IMPORT AlertController secara spesifik
 import { 
   IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonIcon, 
   IonBadge, IonSearchbar, IonItem, IonLabel, IonInput, IonGrid, 
@@ -31,10 +30,12 @@ import html2canvas from 'html2canvas';
 export class Tab1Page {
   statusHalaman: string = 'depan';
 
+  // Model Input Produk
   baruNama: string = ''; baruStok: number = 0;
   baruPcs: number = 0; baruPack: number = 0; baruHdus: number = 0;
   baruH14: number = 0; baruH12: number = 0; baruH1k: number = 0;
 
+  // Data Aplikasi
   daftarBarang: any[] = [];
   barangFilter: any[] = [];
   keranjang: any[] = [];
@@ -45,7 +46,6 @@ export class Tab1Page {
   transaksiTerakhir: any = null;
   riwayatPenjualan: any[] = [];
 
-  // PERBAIKAN DI SINI: Ganti :any menjadi tipe aslinya
   constructor(
     private cdr: ChangeDetectorRef, 
     private alertController: AlertController,
@@ -71,7 +71,7 @@ export class Tab1Page {
   setHalaman(n: string) {
     this.statusHalaman = n;
     if (n === 'kasir') this.filterBarang();
-    if (n === 'tambah' && !this.sedangEdit) this.resetForm();
+    if (n !== 'tambah') this.resetForm();
     this.cdr.detectChanges();
   }
 
@@ -82,8 +82,13 @@ export class Tab1Page {
       pcs: this.baruPcs, pack: this.baruPack, hdus: this.baruHdus,
       h14: this.baruH14, h12: this.baruH12, h1k: this.baruH1k
     };
-    if (this.sedangEdit) { this.daftarBarang[this.indexEdit] = data; } 
-    else { this.daftarBarang.push(data); }
+    if (this.sedangEdit) {
+      this.daftarBarang[this.indexEdit] = data;
+      this.presentToast('Produk diperbarui!');
+    } else {
+      this.daftarBarang.push(data);
+      this.presentToast('Produk disimpan!');
+    }
     this.simpanKeStorage();
     this.resetForm();
     this.filterBarang();
@@ -100,18 +105,28 @@ export class Tab1Page {
     this.cdr.detectChanges();
   }
 
-  batalEdit() { this.resetForm(); this.cdr.detectChanges(); }
+  batalEdit() {
+    this.resetForm();
+    this.cdr.detectChanges();
+  }
 
   async hapusBarang(b: any) {
     const alert = await this.alertController.create({
       header: 'Hapus Produk?',
       message: `Yakin ingin menghapus ${b.nama}?`,
-      buttons: [{ text: 'Batal' }, { text: 'Hapus', handler: () => {
-        this.daftarBarang = this.daftarBarang.filter(x => x !== b);
-        this.simpanKeStorage();
-        this.filterBarang();
-        this.cdr.detectChanges();
-      }}]
+      buttons: [
+        { text: 'Batal', role: 'cancel' },
+        { 
+          text: 'Hapus', 
+          handler: () => {
+            this.daftarBarang = this.daftarBarang.filter(x => x !== b);
+            this.simpanKeStorage();
+            this.filterBarang();
+            this.cdr.detectChanges();
+            this.presentToast('Produk dihapus');
+          } 
+        }
+      ]
     });
     await alert.present();
   }
@@ -178,7 +193,7 @@ export class Tab1Page {
     const canvas = await html2canvas(el);
     const pdf = new jsPDF('p', 'mm',);
     pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 58, 0);
-    pdf.save(`Struk.pdf`);
+    pdf.save(`Struk_SobatGrocery.pdf`);
   }
 
   resetForm() {
