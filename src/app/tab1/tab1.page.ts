@@ -1,11 +1,17 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+// IMPORT AlertController secara spesifik
+import { 
+  IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonIcon, 
+  IonBadge, IonSearchbar, IonItem, IonLabel, IonInput, IonGrid, 
+  IonRow, IonCol, IonButton, IonList, IonCardContent, IonText,
+  AlertController, ToastController
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
   cart, cube, receipt, create, trash, closeCircle, 
-  downloadOutline, chevronForward, basket, close 
+  downloadOutline, chevronForward, basket, close, printOutline 
 } from 'ionicons/icons';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -15,17 +21,20 @@ import html2canvas from 'html2canvas';
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [
+    CommonModule, FormsModule, IonHeader, IonToolbar, IonTitle, 
+    IonContent, IonCard, IonIcon, IonBadge, IonSearchbar, IonItem, 
+    IonLabel, IonInput, IonGrid, IonRow, IonCol, IonButton, IonList, 
+    IonCardContent, IonText
+  ]
 })
 export class Tab1Page {
   statusHalaman: string = 'depan';
 
-  // Model Input
   baruNama: string = ''; baruStok: number = 0;
   baruPcs: number = 0; baruPack: number = 0; baruHdus: number = 0;
   baruH14: number = 0; baruH12: number = 0; baruH1k: number = 0;
 
-  // Data
   daftarBarang: any[] = [];
   barangFilter: any[] = [];
   keranjang: any[] = [];
@@ -36,12 +45,13 @@ export class Tab1Page {
   transaksiTerakhir: any = null;
   riwayatPenjualan: any[] = [];
 
+  // PERBAIKAN DI SINI: Ganti :any menjadi tipe aslinya
   constructor(
-    private alertController: AlertController, 
-    private toastController: ToastController, 
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef, 
+    private alertController: AlertController,
+    private toastController: ToastController
   ) {
-    addIcons({ cart, cube, receipt, create, trash, closeCircle, downloadOutline, chevronForward, basket, close });
+    addIcons({ cart, cube, receipt, create, trash, closeCircle, downloadOutline, chevronForward, basket, close, printOutline });
     this.muatData();
   }
 
@@ -72,13 +82,8 @@ export class Tab1Page {
       pcs: this.baruPcs, pack: this.baruPack, hdus: this.baruHdus,
       h14: this.baruH14, h12: this.baruH12, h1k: this.baruH1k
     };
-    if (this.sedangEdit) {
-      this.daftarBarang[this.indexEdit] = data;
-      this.presentToast('Data diperbarui!');
-    } else {
-      this.daftarBarang.push(data);
-      this.presentToast('Data disimpan!');
-    }
+    if (this.sedangEdit) { this.daftarBarang[this.indexEdit] = data; } 
+    else { this.daftarBarang.push(data); }
     this.simpanKeStorage();
     this.resetForm();
     this.filterBarang();
@@ -88,33 +93,23 @@ export class Tab1Page {
   editBarang(b: any) {
     this.sedangEdit = true;
     this.indexEdit = this.daftarBarang.indexOf(b);
-    this.baruNama = b.nama; 
-    this.baruStok = b.stok;
-    this.baruPcs = b.pcs || 0; 
-    this.baruPack = b.pack || 0; 
-    this.baruHdus = b.hdus || 0;
-    this.baruH14 = b.h14 || 0; 
-    this.baruH12 = b.h12 || 0; 
-    this.baruH1k = b.h1k || 0;
+    this.baruNama = b.nama; this.baruStok = b.stok;
+    this.baruPcs = b.pcs || 0; this.baruPack = b.pack || 0; this.baruHdus = b.hdus || 0;
+    this.baruH14 = b.h14 || 0; this.baruH12 = b.h12 || 0; this.baruH1k = b.h1k || 0;
     this.statusHalaman = 'tambah';
     this.cdr.detectChanges();
   }
 
-  batalEdit() {
-    this.resetForm();
-    this.statusHalaman = 'tambah';
-    this.cdr.detectChanges();
-  }
+  batalEdit() { this.resetForm(); this.cdr.detectChanges(); }
 
   async hapusBarang(b: any) {
     const alert = await this.alertController.create({
       header: 'Hapus Produk?',
-      message: `Hapus ${b.nama}?`,
+      message: `Yakin ingin menghapus ${b.nama}?`,
       buttons: [{ text: 'Batal' }, { text: 'Hapus', handler: () => {
         this.daftarBarang = this.daftarBarang.filter(x => x !== b);
         this.simpanKeStorage();
         this.filterBarang();
-        this.resetForm();
         this.cdr.detectChanges();
       }}]
     });
@@ -162,11 +157,7 @@ export class Tab1Page {
     this.cdr.detectChanges();
   }
 
-  lihatDetail(t: any) { 
-    this.transaksiTerakhir = t; 
-    this.statusHalaman = 'struk'; 
-    this.cdr.detectChanges();
-  }
+  lihatDetail(t: any) { this.transaksiTerakhir = t; this.statusHalaman = 'struk'; this.cdr.detectChanges(); }
 
   async hapusRiwayat(idx: number, ev: any) {
     ev.stopPropagation();
@@ -187,7 +178,7 @@ export class Tab1Page {
     const canvas = await html2canvas(el);
     const pdf = new jsPDF('p', 'mm',);
     pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 58, 0);
-    pdf.save(`Struk_SobatGrocery.pdf`);
+    pdf.save(`Struk.pdf`);
   }
 
   resetForm() {
