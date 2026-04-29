@@ -79,15 +79,15 @@ export class Tab1Page {
     if (!this.baruNama) { this.presentToast('Nama produk wajib diisi!'); return; }
     const data = {
       nama: this.baruNama, stok: this.baruStok,
-      pcs: this.baruPcs, pack: this.baruPack, hdus: this.baruHdus,
-      h14: this.baruH14, h12: this.baruH12, h1k: this.baruH1k
+      pcs: this.baruPcs || 0, pack: this.baruPack || 0, hdus: this.baruHdus || 0,
+      h14: this.baruH14 || 0, h12: this.baruH12 || 0, h1k: this.baruH1k || 0
     };
     if (this.sedangEdit) {
       this.daftarBarang[this.indexEdit] = data;
-      this.presentToast('Produk diperbarui!');
+      this.presentToast('Update Berhasil!');
     } else {
       this.daftarBarang.push(data);
-      this.presentToast('Produk disimpan!');
+      this.presentToast('Data disimpan!');
     }
     this.simpanKeStorage();
     this.resetForm();
@@ -99,16 +99,13 @@ export class Tab1Page {
     this.sedangEdit = true;
     this.indexEdit = this.daftarBarang.indexOf(b);
     this.baruNama = b.nama; this.baruStok = b.stok;
-    this.baruPcs = b.pcs || 0; this.baruPack = b.pack || 0; this.baruHdus = b.hdus || 0;
-    this.baruH14 = b.h14 || 0; this.baruH12 = b.h12 || 0; this.baruH1k = b.h1k || 0;
+    this.baruPcs = b.pcs; this.baruPack = b.pack; this.baruHdus = b.hdus;
+    this.baruH14 = b.h14; this.baruH12 = b.h12; this.baruH1k = b.h1k;
     this.statusHalaman = 'tambah';
     this.cdr.detectChanges();
   }
 
-  batalEdit() {
-    this.resetForm();
-    this.cdr.detectChanges();
-  }
+  batalEdit() { this.resetForm(); this.cdr.detectChanges(); }
 
   async hapusBarang(b: any) {
     const alert = await this.alertController.create({
@@ -116,14 +113,11 @@ export class Tab1Page {
       message: `Yakin ingin menghapus ${b.nama}?`,
       buttons: [
         { text: 'Batal', role: 'cancel' },
-        { 
-          text: 'Hapus', 
-          handler: () => {
+        { text: 'Hapus', handler: () => {
             this.daftarBarang = this.daftarBarang.filter(x => x !== b);
             this.simpanKeStorage();
             this.filterBarang();
             this.cdr.detectChanges();
-            this.presentToast('Produk dihapus');
           } 
         }
       ]
