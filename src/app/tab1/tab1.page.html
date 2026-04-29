@@ -1,6 +1,6 @@
 <ion-header class="ion-no-border">
   <ion-toolbar style="--background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%); --color: white;">
-    <ion-title style="font-weight: 800;">SobatGrocery</ion-title>
+    <ion-title style="font-weight: 800;">KasirGrocery</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -55,6 +55,10 @@
     <ion-item lines="outline" class="ion-margin-bottom"><ion-label position="stacked">Nama Produk</ion-label><ion-input [(ngModel)]="baruNama"></ion-input></ion-item>
     <ion-item lines="outline" class="ion-margin-bottom"><ion-label position="stacked">Stok Gudang</ion-label><ion-input type="number" [(ngModel)]="baruStok"></ion-input></ion-item>
     
+    <p style="margin-left: 5px; font-weight: bold; color: #444; margin-top: 10px;">
+         Masukan Harga Produk:
+    </p>
+
     <ion-grid>
       <ion-row>
         <ion-col size="4"><div class="price-tile"><small>Pcs</small><ion-input type="number" [(ngModel)]="baruPcs"></ion-input></div></ion-col>
